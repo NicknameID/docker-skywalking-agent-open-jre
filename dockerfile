@@ -7,7 +7,7 @@ ADD https://mirrors.tuna.tsinghua.edu.cn/apache/skywalking/${SKYWALKING_VERSION}
 RUN tar -zxvf /apache-skywalking-apm-${SKYWALKING_VERSION}.tar.gz && \
     mv apache-skywalking-apm-bin skywalking && \
     mv /skywalking/agent/optional-plugins/apm-trace-ignore-plugin* /skywalking/agent/plugins/ && \
-    rm *-kafka-plugin-*.jar && \
+    rm /skywalking/agent/plugins/*-kafka-plugin-*.jar && \
     echo -e "\n# Ignore Path" >> /skywalking/agent/config/agent.config && \
     echo "# see https://github.com/apache/skywalking/blob/master/docs/en/setup/service-agent/java-agent/agent-optional-plugins/trace-ignore-plugin.md" >> /skywalking/agent/config/agent.config && \
     echo 'trace.ignore_path=${SW_IGNORE_PATH:/health}' >> /skywalking/agent/config/agent.config
