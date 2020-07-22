@@ -1,0 +1,18 @@
+FROM alpine:3.8 as builder 
+
+ENV SKYWALKING_VERSION=8.0.1
+
+ADD https://mirrors.tuna.tsinghua.edu.cn/apache/skywalking/${SKYWALKING_VERSION}/apache-skywalking-apm-${SKYWALKING_VERSION}.tar.gz /
+
+RUN tar -zxvf /apache-skywalking-apm-${SKYWALKING_VERSION}.tar.gz && \
+    mv apache-skywalking-apm-bin skywalking && \
+    mv /skywalking/agent/optional-plugins/apm-trace-ignore-plugin* /skywalking/agent/plugins/ && \
+    rm /skywalking/agent/plugins/*-kafka-plugin-*.jar && \
+    echo -e "\n# Ignore Path" >> /skywalking/agent/config/agent.config && \
+    echo "# see https://github.com/apache/skywalking/blob/master/docs/en/setup/service-agent/java-agent/agent-optional-plugins/trace-ignore-plugin.md" >> /skywalking/agent/config/agent.config && \
+    echo 'trace.ignore_path=${SW_IGNORE_PATH:/health}' >> /skywalking/agent/config/agent.config
+    
+
+FROM openjdk:11-jre
+ENV TZ Asia/Shanghai
+COPY --from=builder /skywalking/agent/ /skywalking/agent/
